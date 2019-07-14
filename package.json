@@ -7,13 +7,22 @@
         "node": "10"
     },
     "scripts": {
-        "generate": "ts-node cmd/index.ts",
+        "generate": "ts-node index.ts",
         "format": "prettier --write \"cmd/**/*.ts\" \"lib/**/*.ts\""
     },
     "devDependencies": {
+        "@types/ejs": "^2.6.3",
+        "@types/mkdirp": "^0.5.2",
+        "@types/node": "^12.6.2",
+        "@types/showdown": "^1.9.3",
         "prettier": "^1.18.2",
         "ts-node": "^8.3.0",
         "tslint": "^5.18.0",
         "typescript": "^3.5.3"
+    },
+    "dependencies": {
+        "ejs": "^2.6.2",
+        "mkdirp": "^0.5.1",
+        "showdown": "^1.9.0"
     }
 }
