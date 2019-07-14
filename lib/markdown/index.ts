@@ -1,6 +1,6 @@
-import showdown, { Metadata } from "showdown";
 import fs from 'fs';
 import path from "path";
+import showdown, { Metadata } from "showdown";
 import * as console from "../console";
 
 const MARKDOWN_EXT = ".md";
