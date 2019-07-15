@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from "fs";
 import path from "path";
 import showdown, { Metadata } from "showdown";
 import * as console from "../console";
@@ -15,43 +15,48 @@ export interface ParsedFile {
     content: string; // HTML string
 }
 
-export function readFrom(dirname: string): ParsedFile[] {
-    console.log(`Reading .md files from ${dirname}`);
+export interface MarkdownTree {
+    [key: string]: ParsedFile | MarkdownTree;
+}
 
-    let parsedFiles: ParsedFile[] = [];
-    const converter = new showdown.Converter({metadata: true});
+export function readFrom(dirname: string): MarkdownTree {
+    console.log(`Reading files from ${dirname}`);
+
+    let markdownTree: MarkdownTree = {};
+    const converter = new showdown.Converter({ metadata: true });
     const filenames = fs.readdirSync(dirname);
-    
+
     for (const filename of filenames) {
-        const ext = path.parse(filename).ext;
-        if (ext !== MARKDOWN_EXT) {
-            console.warn(`${filename} is not a markdown file, skipping.`)
-            continue;
-        }
-
         const filepath = path.join(dirname, filename);
-        const file = fs.readFileSync(filepath, FILE_ENCODING);
+        const isDirectory = fs.existsSync(filepath) && fs.lstatSync(filepath).isDirectory();
+        const parsed = path.parse(filepath);
+        const ext = parsed.ext;
+        const name = parsed.name;
 
-        const content = converter.makeHtml(file);
-        const metadata = converter.getMetadata();
+        if (isDirectory) {
+            markdownTree[name] = readFrom(filepath);
+        } else {
+            if (ext !== MARKDOWN_EXT) {
+                console.warn(`${filename} is not a markdown file, skipping.`);
+                continue;
+            }
 
-        if (content == "") {
-            console.warn(`${filename} has no content, skipping.`)
-            continue;
+            const file = fs.readFileSync(filepath, FILE_ENCODING);
+
+            const content = converter.makeHtml(file);
+            const metadata = converter.getMetadata();
+
+            if (!isParsedFileMetadata(metadata)) {
+                console.warn(`${filename} is missing required metadata fields, skipping.`);
+                continue;
+            }
+
+            const parsedFile = { metadata, content };
+            markdownTree[name] = parsedFile;
         }
-
-        if (!isParsedFileMetadata(metadata)) {
-            console.warn(`${filename} is missing required metadata fields, skipping.`)
-            continue;
-        }
-
-        const parsedFile = { metadata, content };
-        parsedFiles.push(parsedFile);
     }
 
-    console.log("Done reading files.")
-
-    return parsedFiles;
+    return markdownTree;
 }
 
 function isParsedFileMetadata(metadata: Metadata | string): metadata is ParsedFileMetadata {
