@@ -19,8 +19,9 @@ export interface MarkdownTree {
     [key: string]: ParsedFile | MarkdownTree;
 }
 
-export function readFrom(dirname: string): MarkdownTree {
-    console.log(`Reading files from ${dirname}`);
+// TODO: better name
+export function parseTreeFrom(dirname: string): MarkdownTree {
+    console.log(`Reading markdown files from ${dirname}`);
 
     let markdownTree: MarkdownTree = {};
     const converter = new showdown.Converter({ metadata: true });
@@ -34,7 +35,7 @@ export function readFrom(dirname: string): MarkdownTree {
         const name = parsed.name;
 
         if (isDirectory) {
-            markdownTree[name] = readFrom(filepath);
+            markdownTree[name] = parseTreeFrom(filepath);
         } else {
             if (ext !== MARKDOWN_EXT) {
                 console.warn(`${filename} is not a markdown file, skipping.`);
@@ -59,9 +60,14 @@ export function readFrom(dirname: string): MarkdownTree {
     return markdownTree;
 }
 
+export function isParsedFile(markdownTree: ParsedFile | MarkdownTree): markdownTree is ParsedFile {
+    return markdownTree.metadata !== undefined;
+}
+
 function isParsedFileMetadata(metadata: Metadata | string): metadata is ParsedFileMetadata {
     if (typeof metadata === "string") {
         return false;
     }
     return metadata.title !== undefined;
 }
+
