@@ -12,6 +12,7 @@
     },
     "devDependencies": {
         "@types/ejs": "^2.6.3",
+        "@types/fs-extra": "^8.0.0",
         "@types/mkdirp": "^0.5.2",
         "@types/node": "^12.6.2",
         "@types/showdown": "^1.9.3",
@@ -22,6 +23,7 @@
     },
     "dependencies": {
         "ejs": "^2.6.2",
+        "fs-extra": "^8.1.0",
         "mkdirp": "^0.5.1",
         "showdown": "^1.9.0"
     }
