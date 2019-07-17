@@ -1,13 +1,15 @@
 import fs from "fs";
 import path from "path";
 import showdown, { Metadata } from "showdown";
-import * as console from "../console";
+import yaml from "js-yaml";
+// import * as console from "../console";
 
 const MARKDOWN_EXT = ".md";
 const FILE_ENCODING = "utf8";
 
-export interface ParsedFileMetadata extends Metadata {
+export interface ParsedFileMetadata {
     title: string;
+    require: string[];
 }
 
 export interface ParsedFile {
@@ -45,7 +47,8 @@ export function parseTreeFrom(dirname: string): MarkdownTree {
             const file = fs.readFileSync(filepath, FILE_ENCODING);
 
             const content = converter.makeHtml(file);
-            const metadata = converter.getMetadata();
+            const metadataString = converter.getMetadata(true) as string;
+            const metadata: ParsedFileMetadata = yaml.safeLoad(metadataString);
 
             if (!isParsedFileMetadata(metadata)) {
                 console.warn(`${filename} is missing required metadata fields, skipping.`);
@@ -57,6 +60,33 @@ export function parseTreeFrom(dirname: string): MarkdownTree {
         }
     }
 
+    // We want to include POSTS in the metadata for index.html
+    // How to do this agnostically?
+    // require field in the markdown, specifying the key of the thing (posts, about)
+
+    // Write some tests first to ensure we don't break anything?
+
+    // for all require, if a key exists in the markdown tree, add the metadata of that key
+    // e.g require: posts
+    // { title: "foo", content: "bar", posts: [
+    //     {
+    //         metadata: { title: "bar" }
+    //         content: "Blah"
+    //     }
+    // ]}
+
+    // for (const [key, value] of Object.entries(markdownTree)) {
+
+    // }
+
+    // if (metadata.require) {
+    //     for (const required of metadata.require) {
+            
+    //     }
+    // }
+
+    console.log(markdownTree);
+
     return markdownTree;
 }
 
@@ -64,7 +94,7 @@ export function isParsedFile(markdownTree: ParsedFile | MarkdownTree): markdownT
     return markdownTree.metadata !== undefined;
 }
 
-function isParsedFileMetadata(metadata: Metadata | string): metadata is ParsedFileMetadata {
+function isParsedFileMetadata(metadata: any): metadata is ParsedFileMetadata {
     if (typeof metadata === "string") {
         return false;
     }
