@@ -8,16 +8,21 @@
     },
     "scripts": {
         "generate": "ts-node index.ts",
-        "format": "prettier --write \"cmd/**/*.ts\" \"lib/**/*.ts\""
+        "format": "prettier --write \"cmd/**/*.ts\" \"lib/**/*.ts\"",
+        "test": "jest --config jest.config.js"
     },
     "devDependencies": {
         "@types/ejs": "^2.6.3",
         "@types/fs-extra": "^8.0.0",
+        "@types/jest": "^24.0.15",
         "@types/js-yaml": "^3.12.1",
         "@types/mkdirp": "^0.5.2",
         "@types/node": "^12.6.2",
         "@types/showdown": "^1.9.3",
+        "jest": "^24.8.0",
+        "memfs": "^2.15.5",
         "prettier": "^1.18.2",
+        "ts-jest": "^24.0.2",
         "ts-node": "^8.3.0",
         "tslint": "^5.18.0",
         "typescript": "^3.5.3"

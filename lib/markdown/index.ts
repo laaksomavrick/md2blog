@@ -95,9 +95,11 @@ export function isParsedFile(markdownTree: ParsedFile | MarkdownTree): markdownT
 }
 
 function isParsedFileMetadata(metadata: any): metadata is ParsedFileMetadata {
-    if (typeof metadata === "string") {
+    if (!metadata) {
+        return false;
+    } else if (typeof metadata === "string") {
         return false;
     }
-    return metadata.title !== undefined;
+   return metadata.title !== undefined;
 }
 
