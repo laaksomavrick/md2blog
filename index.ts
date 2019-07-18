@@ -7,6 +7,6 @@ const mdTree = markdown.parseTreeFrom(__dirname + "/example/markdown");
 
 const htmlTree = templates.parseTreeFrom(__dirname + "/example/templates", mdTree);
 
-// templates.write(__dirname + "/public", htmlTree);
+templates.write(__dirname + "/public", htmlTree);
 
 process.exit(0);

@@ -1,8 +1,8 @@
 import fs from "fs";
-import path from "path";
-import showdown, { Metadata } from "showdown";
 import yaml from "js-yaml";
-// import * as console from "../console";
+import path from "path";
+import showdown from "showdown";
+import * as console from "../console";
 
 const MARKDOWN_EXT = ".md";
 const FILE_ENCODING = "utf8";
@@ -15,6 +15,7 @@ export interface ParsedFileMetadata {
 export interface ParsedFile {
     metadata: ParsedFileMetadata;
     content: string; // HTML string
+    required?: { [key: string]: any }; // Populated values from the metadata.require array
 }
 
 export interface MarkdownTree {
@@ -60,32 +61,22 @@ export function parseTreeFrom(dirname: string): MarkdownTree {
         }
     }
 
-    // We want to include POSTS in the metadata for index.html
-    // How to do this agnostically?
-    // require field in the markdown, specifying the key of the thing (posts, about)
-
-    // Write some tests first to ensure we don't break anything?
-
-    // for all require, if a key exists in the markdown tree, add the metadata of that key
-    // e.g require: posts
-    // { title: "foo", content: "bar", posts: [
-    //     {
-    //         metadata: { title: "bar" }
-    //         content: "Blah"
-    //     }
-    // ]}
-
-    // for (const [key, value] of Object.entries(markdownTree)) {
-
-    // }
-
-    // if (metadata.require) {
-    //     for (const required of metadata.require) {
-            
-    //     }
-    // }
-
-    console.log(markdownTree);
+    // We can only populate the required fields once the tree is done being parsed,
+    // otherwise a required field may not be present yet
+    // TODO: clean up
+    for (const [key, value] of Object.entries(markdownTree)) {
+        const metadata = value.metadata;
+        if (isParsedFileMetadata(metadata)) {
+            const require = metadata.require;
+            if (require) {
+                for (const required of metadata.require) {
+                    // Will only work with one level on nesting
+                    const populated = { ...value, [required]: markdownTree[required] };
+                    markdownTree[key] = populated;
+                }
+            }
+        }
+    }
 
     return markdownTree;
 }
@@ -100,6 +91,5 @@ function isParsedFileMetadata(metadata: any): metadata is ParsedFileMetadata {
     } else if (typeof metadata === "string") {
         return false;
     }
-   return metadata.title !== undefined;
+    return metadata.title !== undefined;
 }
-

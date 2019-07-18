@@ -39,6 +39,7 @@ The great aardvark
         const index = mdTree["index"] as markdown.ParsedFile;
         expect(index).toBeDefined();
         expect(index).toHaveProperty("metadata");
+        expect(index).toHaveProperty("posts");
         expect(index.metadata).toHaveProperty("title");
         expect(index.metadata.title).toEqual("this is the index");
 

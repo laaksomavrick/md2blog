@@ -16,6 +16,10 @@
         <h1> Hello, world </h1>
         <% } %>
 
+        <% for (const [_, post] of Object.entries(posts)) { %>
+        <h1><%= post.metadata.title %></h1>
+        <% } %>
+
         <%- content %>
     </body>
 
