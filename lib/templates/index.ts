@@ -70,7 +70,7 @@ export function write(dirname: string, tree: HtmlTree): void {
     console.log(`Writing html to ${dirname}`);
 
     fs.removeSync(dirname);
-    mkdirp.sync(dirname)
+    mkdirp.sync(dirname);
 
     for (const [key, value] of Object.entries(tree)) {
         // if the value of this entry is an object, we need to create a new directory
@@ -79,9 +79,9 @@ export function write(dirname: string, tree: HtmlTree): void {
             const subdirname = path.join(dirname, key);
             write(subdirname, value);
         } else {
-           const filename = `${key}.html`;
-           const filepath = path.join(dirname, filename);
-           fs.writeFileSync(filepath, value);
+            const filename = `${key}.html`;
+            const filepath = path.join(dirname, filename);
+            fs.writeFileSync(filepath, value);
         }
     }
 }

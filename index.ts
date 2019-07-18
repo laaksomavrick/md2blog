@@ -3,9 +3,9 @@ import * as templates from "./lib/templates";
 
 // POC
 
-const mdTree = markdown.parseTreeFrom(__dirname + "/markdown");
+const mdTree = markdown.parseTreeFrom(__dirname + "/example/markdown");
 
-const htmlTree = templates.parseTreeFrom(__dirname + "/templates", mdTree);
+const htmlTree = templates.parseTreeFrom(__dirname + "/example/templates", mdTree);
 
 templates.write(__dirname + "/public", htmlTree);
 

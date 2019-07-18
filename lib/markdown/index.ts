@@ -1,18 +1,21 @@
 import fs from "fs";
+import yaml from "js-yaml";
 import path from "path";
-import showdown, { Metadata } from "showdown";
+import showdown from "showdown";
 import * as console from "../console";
 
 const MARKDOWN_EXT = ".md";
 const FILE_ENCODING = "utf8";
 
-export interface ParsedFileMetadata extends Metadata {
+export interface ParsedFileMetadata {
     title: string;
+    require: string[];
 }
 
 export interface ParsedFile {
     metadata: ParsedFileMetadata;
     content: string; // HTML string
+    required?: { [key: string]: any }; // Populated values from the metadata.require array
 }
 
 export interface MarkdownTree {
@@ -45,7 +48,8 @@ export function parseTreeFrom(dirname: string): MarkdownTree {
             const file = fs.readFileSync(filepath, FILE_ENCODING);
 
             const content = converter.makeHtml(file);
-            const metadata = converter.getMetadata();
+            const metadataString = converter.getMetadata(true) as string;
+            const metadata: ParsedFileMetadata = yaml.safeLoad(metadataString);
 
             if (!isParsedFileMetadata(metadata)) {
                 console.warn(`${filename} is missing required metadata fields, skipping.`);
@@ -57,6 +61,23 @@ export function parseTreeFrom(dirname: string): MarkdownTree {
         }
     }
 
+    // We can only populate the required fields once the tree is done being parsed,
+    // otherwise a required field may not be present yet
+    // TODO: clean up
+    for (const [key, value] of Object.entries(markdownTree)) {
+        const metadata = value.metadata;
+        if (isParsedFileMetadata(metadata)) {
+            const require = metadata.require;
+            if (require) {
+                for (const required of metadata.require) {
+                    // Will only work with one level on nesting
+                    const populated = { ...value, [required]: markdownTree[required] };
+                    markdownTree[key] = populated;
+                }
+            }
+        }
+    }
+
     return markdownTree;
 }
 
@@ -64,10 +85,11 @@ export function isParsedFile(markdownTree: ParsedFile | MarkdownTree): markdownT
     return markdownTree.metadata !== undefined;
 }
 
-function isParsedFileMetadata(metadata: Metadata | string): metadata is ParsedFileMetadata {
-    if (typeof metadata === "string") {
+function isParsedFileMetadata(metadata: any): metadata is ParsedFileMetadata {
+    if (!metadata) {
+        return false;
+    } else if (typeof metadata === "string") {
         return false;
     }
     return metadata.title !== undefined;
 }
-
