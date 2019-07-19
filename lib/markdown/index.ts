@@ -96,7 +96,7 @@ function populateParsedMarkdownRequires(files: filesystem.IReadFile[], parsedMar
                 parsedFile.populatedRequire[required] = match;
             } else {
                 match = files.filter(file => file.parentDirectoryName === required);
-                memo[match] = match;
+                memo[required] = match;
                 parsedFile.populatedRequire[required] = match;
             }
         }
