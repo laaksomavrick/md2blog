@@ -3,10 +3,12 @@ import * as templates from "./lib/templates";
 
 // POC
 
-const mdTree = markdown.parseTreeFrom(__dirname + "/example/markdown");
+const parsedMarkdown = markdown.parseFrom(__dirname + "/example/markdown");
 
-const htmlTree = templates.parseTreeFrom(__dirname + "/example/templates", mdTree);
+console.log(parsedMarkdown);
 
-templates.write(__dirname + "/public", htmlTree);
+// const htmlTree = templates.parseTreeFrom(__dirname + "/example/templates", mdTree);
 
-process.exit(0);
+// templates.write(__dirname + "/public", htmlTree);
+
+// process.exit(0);

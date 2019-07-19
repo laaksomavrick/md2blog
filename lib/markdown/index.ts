@@ -1,95 +1,104 @@
-import fs from "fs";
 import yaml from "js-yaml";
-import path from "path";
 import showdown from "showdown";
-import * as console from "../console";
+// import * as console from "../console";
+import * as filesystem from "../filesystem";
 
-const MARKDOWN_EXT = ".md";
-const FILE_ENCODING = "utf8";
-
-export interface ParsedFileMetadata {
+/**
+ * The shape of the parsed metadata field of a markdown document.
+ * This the yaml between the three hyphens in each document
+ */
+export interface IParsedMarkdownMetadata {
+    // The title of the markdown document
     title: string;
+
+    // Other parsed markdown document(s) required for the markdown file's corresponding template
+    // For example, an index.md may want the index.md's title and content, alongside a list of posts
+    // The values in this array should correspond to the parent directory of the items being required
+    // E.g require: ['posts']
     require: string[];
 }
 
-export interface ParsedFile {
-    metadata: ParsedFileMetadata;
-    content: string; // HTML string
-    required?: { [key: string]: any }; // Populated values from the metadata.require array
+/**
+ * The shape of a parsed markdown document, with additional metadata for use in processing/templating
+ */
+export interface IParsedMarkdown extends IParsedMarkdownMetadata {
+    // The absolute path of the parsed markdown file
+    absolutePath: string;
+
+    // The content of the markdown document
+    content: string;
+
+    // Whether or not we want to use a pretty url for the document when served/referenced in html
+    prettyUrl: boolean;
+
+    // The filename of the parsed markdown file
+    fileName: string;
+
+    // The parent directory of the parsed markdown file
+    parentDirectoryName: string;
+
+    // The populated require values
+    populatedRequire: { [key: string]: any | any[] };
 }
 
-export interface MarkdownTree {
-    [key: string]: ParsedFile | MarkdownTree;
+export function parseFrom(dirname: string) {
+    const files = filesystem.readFilesFrom(dirname);
+
+    const parsedFiles = parseMarkdownFiles(files);
+
+    // This is modifying in place
+    populateParsedMarkdownRequires(files, parsedFiles);
+
+    return parsedFiles;
 }
 
-// TODO: better name
-export function parseTreeFrom(dirname: string): MarkdownTree {
-    console.log(`Reading markdown files from ${dirname}`);
-
-    let markdownTree: MarkdownTree = {};
+function parseMarkdownFiles(files: filesystem.IReadFile[]): IParsedMarkdown[] {
     const converter = new showdown.Converter({ metadata: true });
-    const filenames = fs.readdirSync(dirname);
-
-    for (const filename of filenames) {
-        const filepath = path.join(dirname, filename);
-        const isDirectory = fs.existsSync(filepath) && fs.lstatSync(filepath).isDirectory();
-        const parsed = path.parse(filepath);
-        const ext = parsed.ext;
-        const name = parsed.name;
-
-        if (isDirectory) {
-            markdownTree[name] = parseTreeFrom(filepath);
-        } else {
-            if (ext !== MARKDOWN_EXT) {
-                console.warn(`${filename} is not a markdown file, skipping.`);
-                continue;
-            }
-
-            const file = fs.readFileSync(filepath, FILE_ENCODING);
-
-            const content = converter.makeHtml(file);
+    return files.map(
+        (file: filesystem.IReadFile): IParsedMarkdown => {
+            const absolutePath = file.absolutePath;
+            const content = converter.makeHtml(file.fileContents);
             const metadataString = converter.getMetadata(true) as string;
-            const metadata: ParsedFileMetadata = yaml.safeLoad(metadataString);
-
-            if (!isParsedFileMetadata(metadata)) {
-                console.warn(`${filename} is missing required metadata fields, skipping.`);
-                continue;
-            }
-
-            const parsedFile = { metadata, content };
-            markdownTree[name] = parsedFile;
-        }
-    }
-
-    // We can only populate the required fields once the tree is done being parsed,
-    // otherwise a required field may not be present yet
-    // TODO: clean up
-    for (const [key, value] of Object.entries(markdownTree)) {
-        const metadata = value.metadata;
-        if (isParsedFileMetadata(metadata)) {
+            const metadata: IParsedMarkdownMetadata = yaml.safeLoad(metadataString);
             const require = metadata.require;
-            if (require) {
-                for (const required of metadata.require) {
-                    // Will only work with one level on nesting
-                    const populated = { ...value, [required]: markdownTree[required] };
-                    markdownTree[key] = populated;
-                }
+            const title = metadata.title;
+            const fileName = file.fileName;
+            const prettyUrl = false; // TODO
+            const populatedRequire = {};
+            const parentDirectoryName = file.parentDirectoryName;
+
+            return {
+                absolutePath,
+                content,
+                fileName,
+                parentDirectoryName,
+                populatedRequire,
+                prettyUrl,
+                require,
+                title,
+            };
+        },
+    );
+}
+
+function populateParsedMarkdownRequires(files: filesystem.IReadFile[], parsedMarkdown: IParsedMarkdown[]): void {
+    const memo: any = {};
+
+    for (const parsedFile of parsedMarkdown) {
+        if (!parsedFile.require) {
+            continue;
+        }
+
+        for (const required of parsedFile.require) {
+            let match = memo[required];
+
+            if (match) {
+                parsedFile.populatedRequire[required] = match;
+            } else {
+                match = files.filter(file => file.parentDirectoryName === required);
+                memo[match] = match;
+                parsedFile.populatedRequire[required] = match;
             }
         }
     }
-
-    return markdownTree;
-}
-
-export function isParsedFile(markdownTree: ParsedFile | MarkdownTree): markdownTree is ParsedFile {
-    return markdownTree.metadata !== undefined;
-}
-
-function isParsedFileMetadata(metadata: any): metadata is ParsedFileMetadata {
-    if (!metadata) {
-        return false;
-    } else if (typeof metadata === "string") {
-        return false;
-    }
-    return metadata.title !== undefined;
 }
