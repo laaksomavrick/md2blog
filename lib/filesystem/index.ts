@@ -23,7 +23,7 @@ export interface IReadFile {
     parentDirectoryName: string;
 }
 
-export function readFilesFrom(dirname: string): IReadFile[] {
+export function readFilesFrom(dirname: string, fileExtension: string | null = null): IReadFile[] {
     console.log(`Reading markdown files from ${dirname}`);
 
     const filenames = fs.readdirSync(dirname);
@@ -35,14 +35,19 @@ export function readFilesFrom(dirname: string): IReadFile[] {
         const isDirectory = fs.existsSync(absolutePath) && fs.lstatSync(absolutePath).isDirectory();
 
         if (isDirectory) {
-            const subdirectoryFiles = readFilesFrom(absolutePath);
+            const subdirectoryFiles = readFilesFrom(absolutePath, fileExtension);
             files = [...files, ...subdirectoryFiles];
         } else {
-            const fileContents = fs.readFileSync(absolutePath, FILE_ENCODING);
-            const parentDirectoryName = path.basename(path.dirname(absolutePath));
             const parsed = path.parse(absolutePath);
             const extension = parsed.ext;
             const fileName = parsed.name;
+
+            if (fileExtension && fileExtension !== extension) {
+                continue;
+            }
+
+            const fileContents = fs.readFileSync(absolutePath, FILE_ENCODING);
+            const parentDirectoryName = path.basename(path.dirname(absolutePath));
 
             const readFile = {
                 absolutePath,
