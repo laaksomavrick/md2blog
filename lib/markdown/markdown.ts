@@ -11,6 +11,9 @@ export interface IParsedMarkdownMetadata {
     // The title of the markdown document
     title: string;
 
+    // The template to use for the markdown file; e.g post -> post.ejs
+    template: string;
+
     // Other parsed markdown document(s) required for the markdown file's corresponding template
     // For example, an index.md may want the index.md's title and content, alongside a list of posts
     // The values in this array should correspond to the parent directory of the items being required
@@ -39,13 +42,16 @@ export interface IParsedMarkdown extends IParsedMarkdownMetadata {
 
     // The populated require values
     populatedRequire: { [key: string]: any | any[] };
+
+    // The subpath from the markdown root
+    subpath: string | null;
 }
 
-export function parseFrom(dirname: string): IParsedMarkdown[] {
-    const files = filesystem.readFilesFrom(dirname, ".md");
+export function parseFrom(root: string): IParsedMarkdown[] {
+    const files = filesystem.readFilesFrom(".md", root, null);
 
     if (files.length === 0) {
-        throw new Error(`No markdown files found in ${dirname}, exiting...`);
+        throw new Error(`No markdown files found in ${root}, exiting...`);
     }
 
     const parsedFiles = parseMarkdownFiles(files);
@@ -66,10 +72,12 @@ export function parseMarkdownFiles(files: filesystem.IReadFile[]): IParsedMarkdo
             const metadata: IParsedMarkdownMetadata = yaml.safeLoad(metadataString);
             const require = metadata.require;
             const title = metadata.title;
+            const template = metadata.template;
             const fileName = file.fileName;
             const prettyUrl = false; // TODO
             const populatedRequire = {};
             const parentDirectoryName = file.parentDirectoryName;
+            const subpath = file.subpath;
 
             return {
                 absolutePath,
@@ -79,6 +87,8 @@ export function parseMarkdownFiles(files: filesystem.IReadFile[]): IParsedMarkdo
                 populatedRequire,
                 prettyUrl,
                 require,
+                subpath,
+                template,
                 title,
             };
         },

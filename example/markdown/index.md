@@ -1,5 +1,6 @@
 ---
 title: this is the index
+template: index
 require:
   - posts
 ---

@@ -1,5 +1,5 @@
 import fs from "fs";
-import path from "path";
+import path, { basename } from "path";
 
 export const FILE_ENCODING = "utf8";
 
@@ -21,21 +21,26 @@ export interface IReadFile {
 
     // The directory name of the file's immediate parent
     parentDirectoryName: string;
+
+    // The subpath from the specified root
+    subpath: string | null;
 }
 
-export function readFilesFrom(dirname: string, fileExtension: string | null = null): IReadFile[] {
-    console.log(`Reading markdown files from ${dirname}`);
+export function readFilesFrom(fileExtension: string, root: string, subpath: string | null): IReadFile[] {
+    const pathToRead = subpath ? `${root}/${subpath}` : root;
+    console.log(`Reading ${fileExtension} files from ${pathToRead}`);
 
-    const filenames = fs.readdirSync(dirname);
+    const filenames = fs.readdirSync(pathToRead);
 
     let files: IReadFile[] = [];
 
     for (const filename of filenames) {
-        const absolutePath = path.join(dirname, filename);
+        const absolutePath = subpath ? path.join(root, subpath, filename) : path.join(root, filename);
         const isDirectory = fs.existsSync(absolutePath) && fs.lstatSync(absolutePath).isDirectory();
 
         if (isDirectory) {
-            const subdirectoryFiles = readFilesFrom(absolutePath, fileExtension);
+            const subDirPath = subpath ? `${subpath}/${path.basename(absolutePath)}` : path.basename(absolutePath);
+            const subdirectoryFiles = readFilesFrom(fileExtension, root, subDirPath);
             files = [...files, ...subdirectoryFiles];
         } else {
             const parsed = path.parse(absolutePath);
@@ -56,6 +61,7 @@ export function readFilesFrom(dirname: string, fileExtension: string | null = nu
                 fileName,
                 isDirectory,
                 parentDirectoryName,
+                subpath,
             };
 
             files.push(readFile);
