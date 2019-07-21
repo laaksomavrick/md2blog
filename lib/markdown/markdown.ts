@@ -56,7 +56,7 @@ export function parseFrom(root: string): IParsedMarkdown[] {
 
     const parsedFiles = parseMarkdownFiles(files);
 
-    // This is modifying in place
+    // This is modifying in place, sry I'm a pleb who reasons imperatively
     populateParsedMarkdownRequires(files, parsedFiles);
 
     return parsedFiles;
@@ -96,6 +96,7 @@ export function parseMarkdownFiles(files: filesystem.IReadFile[]): IParsedMarkdo
 }
 
 export function populateParsedMarkdownRequires(files: filesystem.IReadFile[], parsedMarkdown: IParsedMarkdown[]): void {
+    // Lets only bother finding things once
     const memo: any = {};
 
     for (const parsedFile of parsedMarkdown) {
@@ -109,7 +110,7 @@ export function populateParsedMarkdownRequires(files: filesystem.IReadFile[], pa
             if (match) {
                 parsedFile.populatedRequire[required] = match;
             } else {
-                match = files.filter(file => file.parentDirectoryName === required);
+                match = parsedMarkdown.filter(md => md.parentDirectoryName === required);
                 memo[required] = match;
                 parsedFile.populatedRequire[required] = match;
             }

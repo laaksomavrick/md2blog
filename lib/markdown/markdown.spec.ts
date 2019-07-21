@@ -50,7 +50,6 @@ describe("markdown", () => {
     });
 
     describe("parseFrom", () => {
-
         it("parses a directory of markdown files", () => {
             const md = markdown.parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
             expect(md).toBeDefined();
@@ -81,7 +80,5 @@ describe("markdown", () => {
         // it("throws when an invalid markdown file is givenm", () => {
 
         // })
-
     });
-
 });

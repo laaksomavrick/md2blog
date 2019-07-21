@@ -1,87 +1,88 @@
 import ejs from "ejs";
-import fs from "fs-extra";
-import mkdirp from "mkdirp";
-import path from "path";
-import * as console from "../console";
+import * as filesystem from "../filesystem";
 import * as markdown from "../markdown";
 
 const EJS_EXT = ".ejs";
-const FILE_ENCODING = "utf8";
 
-export interface HtmlTree {
-    [key: string]: string | HtmlTree;
+interface ITemplatedFile {
+    fileName: string;
+    rendered: any;
+    subpath: string | null;
 }
 
-// TODO: refactor common structure with other readFrom
-// TODO: clean up post test writing, this is convoluted right now
-export function parseTreeFrom(
-    dirname: string,
-    markdownTree: markdown.MarkdownTree,
-    nameOverride: string | undefined = undefined,
-): HtmlTree {
-    if (nameOverride) {
-        console.log(`Reading ${nameOverride} from ${dirname}`);
-    } else {
-        console.log(`Reading template files from ${dirname}`);
-    }
+interface ITemplateMap {
+    [key: string]: ejs.TemplateFunction;
+}
 
-    let htmlTree: HtmlTree = {};
-    const filenames = fs.readdirSync(dirname);
+export function parseFrom(dirname: string, parsedMarkdown: markdown.IParsedMarkdown[]): ITemplatedFile[] {
+    const files = filesystem.readFilesFrom(EJS_EXT, dirname, null);
+    const map = getTemplateFiles(files);
+    const templated = renderHtmlFrom(map, parsedMarkdown);
 
-    for (const filename of filenames) {
-        const filepath = path.join(dirname, filename);
-        const isDirectory = fs.existsSync(filepath) && fs.lstatSync(filepath).isDirectory();
-        const parsed = path.parse(filepath);
-        const ext = parsed.ext;
-        const name = nameOverride ? nameOverride : parsed.name;
+    return templated;
+}
 
-        if (isDirectory) {
-            const subTree = markdownTree[name] as markdown.MarkdownTree;
-            const subTreeNames = Object.keys(subTree);
+function renderHtmlFrom(map: ITemplateMap, parsedMarkdown: markdown.IParsedMarkdown[]) {
+    const acc: ITemplatedFile[] = [];
 
-            for (const subTreeName of subTreeNames) {
-                htmlTree[name] = htmlTree[name] ? htmlTree[name] : {};
+    for (const md of parsedMarkdown) {
+        const mdTemplate = md.template;
+        const templateFn = map[mdTemplate];
 
-                const subHtmlTree: HtmlTree = htmlTree[name] as HtmlTree;
-                const subTreeRenderedItem = parseTreeFrom(filepath, subTree, subTreeName);
-
-                htmlTree[name] = { ...subHtmlTree, ...subTreeRenderedItem };
-            }
-        } else {
-            if (ext !== EJS_EXT) {
-                console.warn(`${filename} is not a .ejs file, skipping.`);
-                continue;
-            }
-
-            const file = fs.readFileSync(filepath, FILE_ENCODING);
-
-            const template = ejs.compile(file, {});
-            const data = markdownTree[name];
-            const rendered = template(data);
-
-            htmlTree[name] = rendered;
+        if (!templateFn) {
+            console.error(""); // TODO
+            continue;
         }
+
+        const title = md.title;
+        const content = md.content;
+        const required = md.populatedRequire;
+        const fileName = md.fileName;
+        const subpath = md.subpath;
+
+        const rendered = templateFn({ title, content, required });
+
+        const ret = {
+            fileName,
+            rendered,
+            subpath,
+        };
+
+        acc.push(ret);
     }
 
-    return htmlTree;
+    return acc;
 }
 
-export function write(dirname: string, tree: HtmlTree): void {
-    console.log(`Writing html to ${dirname}`);
+function getTemplateFiles(files: filesystem.IReadFile[]): ITemplateMap {
+    const map: ITemplateMap = {};
 
-    fs.removeSync(dirname);
-    mkdirp.sync(dirname);
-
-    for (const [key, value] of Object.entries(tree)) {
-        // if the value of this entry is an object, we need to create a new directory
-        // and write the files of that subtree in that directory
-        if (typeof value === "object") {
-            const subdirname = path.join(dirname, key);
-            write(subdirname, value);
-        } else {
-            const filename = `${key}.html`;
-            const filepath = path.join(dirname, filename);
-            fs.writeFileSync(filepath, value);
-        }
+    for (const file of files) {
+        const fileName = file.fileName;
+        const fileContents = file.fileContents;
+        const template = ejs.compile(fileContents, {});
+        map[fileName] = template;
     }
+
+    return map;
 }
+
+// export function write(dirname: string, tree: HtmlTree): void {
+//     console.log(`Writing html to ${dirname}`);
+
+//     fs.removeSync(dirname);
+//     mkdirp.sync(dirname);
+
+//     for (const [key, value] of Object.entries(tree)) {
+//         // if the value of this entry is an object, we need to create a new directory
+//         // and write the files of that subtree in that directory
+//         if (typeof value === "object") {
+//             const subdirname = path.join(dirname, key);
+//             write(subdirname, value);
+//         } else {
+//             const filename = `${key}.html`;
+//             const filepath = path.join(dirname, filename);
+//             fs.writeFileSync(filepath, value);
+//         }
+//     }
+// }

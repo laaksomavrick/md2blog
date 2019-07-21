@@ -10,14 +10,14 @@
     </head>
 
     <body>
-        <% if (metadata.title) { %>
-        <h1>Hello, <%= metadata.title %></h1>
+        <% if (title) { %>
+        <h1>Hello, <%= title %></h1>
         <% } else { %>
         <h1> Hello, world </h1>
         <% } %>
 
-        <% for (const [_, post] of Object.entries(posts)) { %>
-        <h1><%= post.metadata.title %></h1>
+        <% for (const post of required.posts) { %>
+        <h1><%= post.title %></h1>
         <% } %>
 
         <%- content %>
