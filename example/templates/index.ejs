@@ -11,7 +11,7 @@
         <% } %>
 
         <% for (const post of required.posts) { %>
-        <h1><%= post.title %></h1>
+        <a href="<%= post.href %>"><%= post.title %></a>
         <% } %>
 
         <%- content %>

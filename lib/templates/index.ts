@@ -8,9 +8,9 @@ import * as markdown from "../markdown";
 const EJS_EXT = ".ejs";
 
 interface ITemplatedFile {
-    fileName: string;
     rendered: any;
     subpath: string | null;
+    href: string;
 }
 
 interface ITemplateMap {
@@ -40,13 +40,13 @@ function renderHtmlFrom(map: ITemplateMap, parsedMarkdown: markdown.IParsedMarkd
         const title = md.title;
         const content = md.content;
         const required = md.populatedRequire;
-        const fileName = md.fileName;
+        const href = md.href;
         const subpath = md.subpath;
 
-        const rendered = templateFn({ title, content, required });
+        const rendered = templateFn({ title, content, required, href });
 
         const ret = {
-            fileName,
+            href,
             rendered,
             subpath,
         };
@@ -70,6 +70,8 @@ function getTemplateFiles(files: filesystem.IReadFile[]): ITemplateMap {
     return map;
 }
 
+// If something else ever needs this, move to filesystem with it's own type
+// Otherwise, leave for now
 export function write(dirname: string, templates: ITemplatedFile[]): void {
     console.log(`Writing html to ${dirname}`);
 
@@ -77,21 +79,15 @@ export function write(dirname: string, templates: ITemplatedFile[]): void {
     mkdirp.sync(dirname);
 
     for (const template of templates) {
-        const subpath = template.subpath;
-        const fileName = template.fileName;
         const rendered = template.rendered;
-
-        let htmlFilepath;
+        const href = template.href;
+        const subpath = template.subpath;
 
         if (subpath) {
-            const subdirpath = path.join(dirname, subpath);
-            mkdirp.sync(subdirpath);
-            htmlFilepath = `${subpath}/${fileName}.html`;
-        } else {
-            htmlFilepath = `${fileName}.html`;
+            mkdirp.sync(`${dirname}/${subpath}`);
         }
 
-        const filepath = path.join(dirname, htmlFilepath);
+        const filepath = path.join(dirname, href);
         fs.writeFileSync(filepath, rendered);
     }
 }

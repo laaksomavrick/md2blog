@@ -32,7 +32,11 @@ export interface IParsedMarkdown extends IParsedMarkdownMetadata {
     content: string;
 
     // Whether or not we want to use a pretty url for the document when served/referenced in html
+    // TODO
     prettyUrl: boolean;
+
+    // String for use in href tags to direct to this particular document
+    href: string;
 
     // The filename of the parsed markdown file
     fileName: string;
@@ -78,11 +82,13 @@ export function parseMarkdownFiles(files: filesystem.IReadFile[]): IParsedMarkdo
             const populatedRequire = {};
             const parentDirectoryName = file.parentDirectoryName;
             const subpath = file.subpath;
+            const href = subpath ? `${subpath}/${file.fileName}.html` : `${file.fileName}.html`;
 
             return {
                 absolutePath,
                 content,
                 fileName,
+                href,
                 parentDirectoryName,
                 populatedRequire,
                 prettyUrl,
