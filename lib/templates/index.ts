@@ -63,7 +63,7 @@ function getTemplateFiles(files: filesystem.IReadFile[]): ITemplateMap {
     for (const file of files) {
         const fileName = file.fileName;
         const fileContents = file.fileContents;
-        const template = ejs.compile(fileContents, {});
+        const template = ejs.compile(fileContents, { filename: file.absolutePath });
         map[fileName] = template;
     }
 
