@@ -2,6 +2,9 @@ import * as markdown from "./lib/markdown";
 import * as templates from "./lib/templates";
 
 // POC
+// TODO: styling
+// TODO: prettyUrl
+// TODO: figure out seo
 
 const parsedMarkdown = markdown.parseFrom(`${__dirname}/example/markdown`);
 

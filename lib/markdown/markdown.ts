@@ -60,7 +60,7 @@ export function parseFrom(root: string): IParsedMarkdown[] {
 
     const parsedFiles = parseMarkdownFiles(files);
 
-    // This is modifying in place, sry I'm a pleb who reasons imperatively
+    // This is modifying in place, sry I'm a pleb
     populateParsedMarkdownRequires(files, parsedFiles);
 
     return parsedFiles;
@@ -77,8 +77,9 @@ export function parseMarkdownFiles(files: filesystem.IReadFile[]): IParsedMarkdo
             const require = metadata.require;
             const title = metadata.title;
             const template = metadata.template;
-            const fileName = file.fileName;
             const prettyUrl = false; // TODO
+            // IF PRETTY URL, ELSE
+            const fileName = file.fileName;
             const populatedRequire = {};
             const parentDirectoryName = file.parentDirectoryName;
             const subpath = file.subpath;

@@ -72,6 +72,7 @@ function getTemplateFiles(files: filesystem.IReadFile[]): ITemplateMap {
 
 // If something else ever needs this, move to filesystem with it's own type
 // Otherwise, leave for now
+// TODO: writeTemplates; writeStyles
 export function write(dirname: string, templates: ITemplatedFile[]): void {
     console.log(`Writing html to ${dirname}`);
 
