@@ -1,4 +1,7 @@
 import ejs from "ejs";
+import fs from "fs-extra";
+import mkdirp from "mkdirp";
+import path from "path";
 import * as filesystem from "../filesystem";
 import * as markdown from "../markdown";
 
@@ -67,22 +70,28 @@ function getTemplateFiles(files: filesystem.IReadFile[]): ITemplateMap {
     return map;
 }
 
-// export function write(dirname: string, tree: HtmlTree): void {
-//     console.log(`Writing html to ${dirname}`);
+export function write(dirname: string, templates: ITemplatedFile[]): void {
+    console.log(`Writing html to ${dirname}`);
 
-//     fs.removeSync(dirname);
-//     mkdirp.sync(dirname);
+    fs.removeSync(dirname);
+    mkdirp.sync(dirname);
 
-//     for (const [key, value] of Object.entries(tree)) {
-//         // if the value of this entry is an object, we need to create a new directory
-//         // and write the files of that subtree in that directory
-//         if (typeof value === "object") {
-//             const subdirname = path.join(dirname, key);
-//             write(subdirname, value);
-//         } else {
-//             const filename = `${key}.html`;
-//             const filepath = path.join(dirname, filename);
-//             fs.writeFileSync(filepath, value);
-//         }
-//     }
-// }
+    for (const template of templates) {
+        const subpath = template.subpath;
+        const fileName = template.fileName;
+        const rendered = template.rendered;
+
+        let htmlFilepath;
+
+        if (subpath) {
+            const subdirpath = path.join(dirname, subpath);
+            mkdirp.sync(subdirpath);
+            htmlFilepath = `${subpath}/${fileName}.html`;
+        } else {
+            htmlFilepath = `${fileName}.html`;
+        }
+
+        const filepath = path.join(dirname, htmlFilepath);
+        fs.writeFileSync(filepath, rendered);
+    }
+}

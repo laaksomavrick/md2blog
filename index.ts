@@ -13,6 +13,6 @@ const parsedTemplates = templates.parseFrom(`${__dirname}/example/templates`, pa
 
 console.log(parsedTemplates);
 
-// templates.write(__dirname + "/public", htmlTree);
+templates.write(__dirname + "/public", parsedTemplates);
 
-// process.exit(0);
+process.exit(0);
