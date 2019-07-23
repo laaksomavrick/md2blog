@@ -1,5 +1,8 @@
-import fs from "fs";
-import path, { basename } from "path";
+import fs from "fs-extra";
+import mkdirp from "mkdirp";
+import path from "path";
+
+import * as templates from "../templates";
 
 export const FILE_ENCODING = "utf8";
 
@@ -69,4 +72,33 @@ export function readFilesFrom(fileExtension: string, root: string, subpath: stri
     }
 
     return files;
+}
+
+// If something else ever needs this, move to filesystem with it's own type
+// Otherwise, leave for now
+// TODO: writeTemplates; writeStyles
+export function writeTemplates(dirname: string, tpls: templates.ITemplatedFile[]): void {
+    console.log(`Writing html to ${dirname}`);
+
+    // TODO move to write, which does this then does writeTemplates and writeStyles
+    fs.removeSync(dirname);
+    mkdirp.sync(dirname);
+
+    for (const template of tpls) {
+        const rendered = template.rendered;
+        const href = template.href;
+        const subpath = template.subpath;
+
+        if (subpath) {
+            mkdirp.sync(`${dirname}/${subpath}`);
+        }
+
+        const filepath = path.join(dirname, href);
+        fs.writeFileSync(filepath, rendered);
+    }
+}
+
+export function writeStyles(dirname: string, stylesFolderPath: string): void {
+    // TODO check if exists, err handling, etc
+    fs.copySync(stylesFolderPath, dirname);
 }

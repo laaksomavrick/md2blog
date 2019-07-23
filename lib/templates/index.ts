@@ -1,13 +1,10 @@
 import ejs from "ejs";
-import fs from "fs-extra";
-import mkdirp from "mkdirp";
-import path from "path";
 import * as filesystem from "../filesystem";
 import * as markdown from "../markdown";
 
 const EJS_EXT = ".ejs";
 
-interface ITemplatedFile {
+export interface ITemplatedFile {
     rendered: any;
     subpath: string | null;
     href: string;
@@ -68,27 +65,4 @@ function getTemplateFiles(files: filesystem.IReadFile[]): ITemplateMap {
     }
 
     return map;
-}
-
-// If something else ever needs this, move to filesystem with it's own type
-// Otherwise, leave for now
-// TODO: writeTemplates; writeStyles
-export function write(dirname: string, templates: ITemplatedFile[]): void {
-    console.log(`Writing html to ${dirname}`);
-
-    fs.removeSync(dirname);
-    mkdirp.sync(dirname);
-
-    for (const template of templates) {
-        const rendered = template.rendered;
-        const href = template.href;
-        const subpath = template.subpath;
-
-        if (subpath) {
-            mkdirp.sync(`${dirname}/${subpath}`);
-        }
-
-        const filepath = path.join(dirname, href);
-        fs.writeFileSync(filepath, rendered);
-    }
 }
