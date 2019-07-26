@@ -1,7 +1,7 @@
 import yaml from "js-yaml";
 import showdown from "showdown";
 // import * as console from "../console";
-import * as filesystem from "../filesystem";
+import { IReadFile, readFilesFrom } from "../filesystem";
 
 /**
  * The shape of the parsed metadata field of a markdown document.
@@ -51,7 +51,7 @@ export interface IParsedMarkdown extends IParsedMarkdownMetadata {
 }
 
 export function parseFrom(root: string): IParsedMarkdown[] {
-    const files = filesystem.readFilesFrom(".md", root, null);
+    const files = readFilesFrom(".md", root, null);
 
     if (files.length === 0) {
         throw new Error(`No markdown files found in ${root}, exiting...`);
@@ -60,16 +60,16 @@ export function parseFrom(root: string): IParsedMarkdown[] {
     const parsedFiles = parseMarkdownFiles(files);
 
     // This is modifying in place, sry I'm a pleb
-    populateParsedMarkdownRequires(files, parsedFiles);
+    populateParsedMarkdownRequires(parsedFiles);
 
     return parsedFiles;
 }
 
-export function parseMarkdownFiles(files: filesystem.IReadFile[]): IParsedMarkdown[] {
+export function parseMarkdownFiles(files: IReadFile[]): IParsedMarkdown[] {
     const converter = new showdown.Converter({ metadata: true });
 
     return files.map(
-        (file: filesystem.IReadFile): IParsedMarkdown => {
+        (file: IReadFile): IParsedMarkdown => {
             const content = converter.makeHtml(file.fileContents);
             const metadataString = converter.getMetadata(true) as string;
 
@@ -103,7 +103,7 @@ export function parseMarkdownFiles(files: filesystem.IReadFile[]): IParsedMarkdo
     );
 }
 
-export function populateParsedMarkdownRequires(files: filesystem.IReadFile[], parsedMarkdown: IParsedMarkdown[]): void {
+export function populateParsedMarkdownRequires(parsedMarkdown: IParsedMarkdown[]): void {
     // Lets only bother finding things once
     const memo: any = {};
 

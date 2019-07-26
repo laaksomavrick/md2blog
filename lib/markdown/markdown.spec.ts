@@ -14,6 +14,7 @@ const NON_MARKDOWN_DIRECTORY = "nonmarkdowndirectory";
 
 describe("markdown", () => {
     beforeAll(() => {
+        // Would be great to do this per test
         const markdownDirectory = {
             "./index.md": stripIndent`
                 ---

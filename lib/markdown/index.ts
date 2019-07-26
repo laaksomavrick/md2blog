@@ -1,1 +1,1 @@
-export { IParsedMarkdown, IParsedMarkdownMetadata, parseFrom } from "./markdown";
+export * from "./markdown";
