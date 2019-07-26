@@ -19,6 +19,9 @@ export interface IParsedMarkdownMetadata {
     // The values in this array should correspond to the parent directory of the items being required
     // E.g require: ['posts']
     require: string[];
+
+    // Whether or not we want to use a pretty url for the document when served/referenced in html
+    prettyUrl: boolean;
 }
 
 /**
@@ -30,10 +33,6 @@ export interface IParsedMarkdown extends IParsedMarkdownMetadata {
 
     // The content of the markdown document
     content: string;
-
-    // Whether or not we want to use a pretty url for the document when served/referenced in html
-    // TODO
-    prettyUrl: boolean;
 
     // String for use in href tags to direct to this particular document
     href: string;
@@ -68,22 +67,24 @@ export function parseFrom(root: string): IParsedMarkdown[] {
 
 export function parseMarkdownFiles(files: filesystem.IReadFile[]): IParsedMarkdown[] {
     const converter = new showdown.Converter({ metadata: true });
+
     return files.map(
         (file: filesystem.IReadFile): IParsedMarkdown => {
-            const absolutePath = file.absolutePath;
             const content = converter.makeHtml(file.fileContents);
             const metadataString = converter.getMetadata(true) as string;
+
             const metadata: IParsedMarkdownMetadata = yaml.safeLoad(metadataString);
             const require = metadata.require;
             const title = metadata.title;
             const template = metadata.template;
-            const prettyUrl = false; // TODO
-            // IF PRETTY URL, ELSE
-            const fileName = file.fileName;
+            const prettyUrl = metadata.prettyUrl || false;
+
+            const absolutePath = file.absolutePath;
+            const fileName = prettyUrl ? metadata.title.split(" ").join("-") : file.fileName;
             const populatedRequire = {};
             const parentDirectoryName = file.parentDirectoryName;
             const subpath = file.subpath;
-            const href = subpath ? `${subpath}/${file.fileName}.html` : `${file.fileName}.html`;
+            const href = subpath ? `${subpath}/${fileName}.html` : `${fileName}.html`;
 
             return {
                 absolutePath,
