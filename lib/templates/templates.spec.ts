@@ -1,7 +1,7 @@
 import { stripIndent } from "common-tags";
 import memfs from "memfs";
 import { IParsedMarkdown } from "../markdown";
-import { parseFrom } from "./templates";
+import { parseFrom, ITemplatedFile } from "./templates";
 
 // Mock fs with memfs so our tests don't actually read from disk
 jest.mock("fs", () => {
@@ -62,34 +62,36 @@ describe("templates", () => {
         },
     ];
 
+    let index: ITemplatedFile;
+    let post: ITemplatedFile;
+
     beforeAll(() => {
         memfs.vol.fromJSON(TEMPLATES, TEMPLATE_DIRECTORY);
+        [index, post] = parseFrom(TEMPLATE_DIRECTORY, PARSED_MARKDOWN);
     });
 
     describe("parseFrom", () => {
         it("templates a flat IParsedMarkdown item", () => {
-            const [index, _] = parseFrom(TEMPLATE_DIRECTORY, PARSED_MARKDOWN);
             expect(index).toBeDefined();
         });
 
         it("templates a nested IParsedMarkdown item", () => {
-            const [_, post] = parseFrom(TEMPLATE_DIRECTORY, PARSED_MARKDOWN);
             expect(post).toBeDefined();
         });
 
         it("sets rendered when parsing an item", () => {
-            const [index, _] = parseFrom(TEMPLATE_DIRECTORY, PARSED_MARKDOWN);
             expect(index.rendered).toBeDefined();
+            expect(post.rendered).toBeDefined();
         });
 
         it("sets subpath when parsing an item", () => {
-            const [_, post] = parseFrom(TEMPLATE_DIRECTORY, PARSED_MARKDOWN);
+            expect(index.subpath).toEqual(undefined);
             expect(post.subpath).toEqual("posts");
         });
 
         it("sets href when parsing an item", () => {
-            const [index, _] = parseFrom(TEMPLATE_DIRECTORY, PARSED_MARKDOWN);
             expect(index.href).toEqual("index.html");
+            expect(post.href).toEqual("posts/0001-post.html");
         });
     });
 });
