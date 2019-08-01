@@ -30,7 +30,9 @@ export interface IReadFile {
 
 export function readFilesFrom(fileExtension: string, root: string, subpath: string | null): IReadFile[] {
     const pathToRead = subpath ? `${root}/${subpath}` : root;
-    console.log(`Reading ${fileExtension} files from ${pathToRead}`);
+    if (process.env.NODE_ENV !== "test") {
+        console.log(`Reading ${fileExtension} files from ${pathToRead}`);
+    }
 
     const filenames = fs.readdirSync(pathToRead);
 
