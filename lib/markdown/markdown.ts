@@ -12,13 +12,14 @@ export interface IParsedMarkdownMetadata {
     title: string;
 
     // The template to use for the markdown file; e.g post -> post.ejs
-    template: string;
+    // TODO: this must be a string
+    template: string | undefined;
 
     // Other parsed markdown document(s) required for the markdown file's corresponding template
     // For example, an index.md may want the index.md's title and content, alongside a list of posts
     // The values in this array should correspond to the parent directory of the items being required
     // E.g require: ['posts']
-    require: string[];
+    require: string[] | undefined;
 
     // Whether or not we want to use a pretty url for the document when served/referenced in html
     prettyUrl: boolean;
@@ -47,7 +48,7 @@ export interface IParsedMarkdown extends IParsedMarkdownMetadata {
     populatedRequire: { [key: string]: any | any[] };
 
     // The subpath from the markdown root
-    subpath: string | null;
+    subpath: string | undefined;
 }
 
 /**
@@ -56,7 +57,7 @@ export interface IParsedMarkdown extends IParsedMarkdownMetadata {
  * when no files are found, or if something unexpected goes wrong (e.g NPE).
  */
 export function parseFrom(root: string): IParsedMarkdown[] {
-    const files = readFilesFrom(".md", root, null);
+    const files = readFilesFrom(".md", root, undefined);
 
     if (files.length === 0) {
         throw new Error(`No markdown files found in ${root}, exiting...`);

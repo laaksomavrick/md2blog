@@ -6,7 +6,7 @@ const EJS_EXT = ".ejs";
 
 export interface ITemplatedFile {
     rendered: any;
-    subpath: string | null;
+    subpath: string | undefined;
     href: string;
 }
 
@@ -15,7 +15,7 @@ interface ITemplateMap {
 }
 
 export function parseFrom(dirname: string, parsedMarkdown: IParsedMarkdown[]): ITemplatedFile[] {
-    const files = filesystem.readFilesFrom(EJS_EXT, dirname, null);
+    const files = filesystem.readFilesFrom(EJS_EXT, dirname, undefined);
     const map = getTemplateFiles(files);
     const templated = renderHtmlFrom(map, parsedMarkdown);
 
@@ -26,7 +26,7 @@ function renderHtmlFrom(map: ITemplateMap, parsedMarkdown: IParsedMarkdown[]) {
     const acc: ITemplatedFile[] = [];
 
     for (const md of parsedMarkdown) {
-        const mdTemplate = md.template;
+        const mdTemplate = md.template || "";
         const templateFn = map[mdTemplate];
 
         if (!templateFn) {

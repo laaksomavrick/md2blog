@@ -25,10 +25,10 @@ export interface IReadFile {
     parentDirectoryName: string;
 
     // The subpath from the specified root
-    subpath: string | null;
+    subpath: string | undefined;
 }
 
-export function readFilesFrom(fileExtension: string, root: string, subpath: string | null): IReadFile[] {
+export function readFilesFrom(fileExtension: string, root: string, subpath: string | undefined): IReadFile[] {
     const pathToRead = subpath ? `${root}/${subpath}` : root;
     if (process.env.NODE_ENV !== "test") {
         console.log(`Reading ${fileExtension} files from ${pathToRead}`);
