@@ -50,6 +50,11 @@ export interface IParsedMarkdown extends IParsedMarkdownMetadata {
     subpath: string | null;
 }
 
+/**
+ * Parses all markdown files from the given filepath, transforming them into
+ * IParsedMarkdown entries of an array and returning it. This function can throw
+ * when no files are found, or if something unexpected goes wrong (e.g NPE).
+ */
 export function parseFrom(root: string): IParsedMarkdown[] {
     const files = readFilesFrom(".md", root, null);
 
@@ -65,7 +70,7 @@ export function parseFrom(root: string): IParsedMarkdown[] {
     return parsedFiles;
 }
 
-export function parseMarkdownFiles(files: IReadFile[]): IParsedMarkdown[] {
+function parseMarkdownFiles(files: IReadFile[]): IParsedMarkdown[] {
     const converter = new showdown.Converter({ metadata: true });
 
     return files.map(
@@ -103,7 +108,7 @@ export function parseMarkdownFiles(files: IReadFile[]): IParsedMarkdown[] {
     );
 }
 
-export function populateParsedMarkdownRequires(parsedMarkdown: IParsedMarkdown[]): void {
+function populateParsedMarkdownRequires(parsedMarkdown: IParsedMarkdown[]): void {
     // Lets only bother finding things once
     const memo: any = {};
 

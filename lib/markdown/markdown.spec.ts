@@ -1,6 +1,6 @@
 import { stripIndent } from "common-tags";
 import memfs from "memfs";
-import * as markdown from "./markdown";
+import {parseFrom} from "./markdown";
 
 // Mock fs with memfs so our tests don't actually write to disk
 jest.mock("fs", () => {
@@ -25,7 +25,7 @@ describe("markdown", () => {
             };
 
             memfs.vol.fromJSON(markdownDirectory, `${__dirname}/${MARKDOWN_DIRECTORY}`);
-            const md = markdown.parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
+            const md = parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
 
             expect(md).toBeDefined();
             expect(md.length).toBe(1);
@@ -42,7 +42,7 @@ describe("markdown", () => {
             };
 
             memfs.vol.fromJSON(markdownDirectory, `${__dirname}/${MARKDOWN_DIRECTORY}`);
-            const md = markdown.parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
+            const md = parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
 
             expect(md).toBeDefined();
             expect(md.length).toBe(1);
@@ -59,7 +59,7 @@ describe("markdown", () => {
             };
 
             memfs.vol.fromJSON(markdownDirectory, `${__dirname}/${MARKDOWN_DIRECTORY}`);
-            const [doc] = markdown.parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
+            const [doc] = parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
 
             expect(doc.title).toEqual(title);
         });
@@ -82,7 +82,7 @@ describe("markdown", () => {
             };
 
             memfs.vol.fromJSON(markdownDirectory, `${__dirname}/${MARKDOWN_DIRECTORY}`);
-            const [doc] = markdown.parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
+            const [doc] = parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
             const { posts } = doc.populatedRequire;
             const [post] = posts;
 
@@ -101,7 +101,7 @@ describe("markdown", () => {
             };
 
             memfs.vol.fromJSON(markdownDirectory, `${__dirname}/${MARKDOWN_DIRECTORY}`);
-            const [doc] = markdown.parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
+            const [doc] = parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
 
             expect(doc.prettyUrl).toEqual(true);
         });
@@ -118,7 +118,7 @@ describe("markdown", () => {
             };
 
             memfs.vol.fromJSON(markdownDirectory, `${__dirname}/${MARKDOWN_DIRECTORY}`);
-            const [doc] = markdown.parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
+            const [doc] = parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
 
             expect(doc.template).toEqual(template);
         });
@@ -135,7 +135,7 @@ describe("markdown", () => {
             };
 
             memfs.vol.fromJSON(markdownDirectory, `${__dirname}/${MARKDOWN_DIRECTORY}`);
-            const [doc] = markdown.parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
+            const [doc] = parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
 
             expect(doc.content).toEqual(content);
         });
@@ -151,7 +151,7 @@ describe("markdown", () => {
             };
 
             memfs.vol.fromJSON(markdownDirectory, `${__dirname}/${MARKDOWN_DIRECTORY}`);
-            const [doc] = markdown.parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
+            const [doc] = parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
 
             expect(doc.href).toEqual("posts/0001-post.html");
         });
@@ -168,7 +168,7 @@ describe("markdown", () => {
             };
 
             memfs.vol.fromJSON(markdownDirectory, `${__dirname}/${MARKDOWN_DIRECTORY}`);
-            const [doc] = markdown.parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
+            const [doc] = parseFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
 
             expect(doc.fileName).toEqual("a-post");
         });
