@@ -1,8 +1,8 @@
 ---
-title: this is the index
+title: index
 template: index
 require:
   - posts
 ---
 
-fdoo bar baz
+index content

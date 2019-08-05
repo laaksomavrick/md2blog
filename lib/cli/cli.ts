@@ -1,22 +1,25 @@
-import { Command } from "commander";
+import commander from "commander";
 import { config } from "../config";
-import { writeStyles, writeTemplates } from "../filesystem";
+import { writeProgramFolder, writeStyles, writeTemplates } from "../filesystem";
 import { parseMarkdownFrom } from "../markdown";
 import { parseTemplatesFrom } from "../templates";
 
 // TODO: comments
 
-export function buildCli(): Command {
-    const program = new Command();
+export function buildCli(): commander.Command {
+    const program = commander;
+    program.version("0.1.0");
+
     program
-        .version("0.1.0")
+        .command("generate")
+        .description("generate blog from given files")
         .option(
-            "-t, --templatesPath <path>",
+            "-t, --templatesPath [path]",
             "The absolute path to a folder containing .ejs templates",
             config.get("templatesPath"),
         )
         .option(
-            "-m, --markdownPath <path>",
+            "-m, --markdownPath [path]",
             "The absolute path to a folder containing .md documents",
             config.get("markdownPath"),
         )
@@ -25,23 +28,31 @@ export function buildCli(): Command {
             "The absolute path to a folder containing stylesheets",
             config.get("stylesPath"),
         )
-        .option("-o, --outPath <path>", "The absolute path for program output", config.get("outPath"));
+        .option("-o, --outPath [path]", "The absolute path for program output", config.get("outPath"))
+        .action(generate);
+
+    program
+        .command("scaffold")
+        .description("scaffold an example md2blog configuration")
+        .action(scaffold);
+
     return program;
 }
 
-export function processArgs(cli: Command): void {
+function generate(...args: any[]): void {
+    const [arg] = args;
     const toCheck = ["templatesPath", "markdownPath", "stylesPath", "outPath"];
 
     for (const check of toCheck) {
-        const cliOptionValue = cli[check];
+        const cliOptionValue = arg[check];
         if (cliOptionValue !== config.get(check)) {
             config.set(check, cliOptionValue);
         }
     }
 
     // TODO
-    // if .md2blog doesn't exist, create it with some sensible default data
-    // writeProgramFolder();
+    // if .md2blog doesn't exist, error message specifying to use md2blog generate
+    // assuming override = false
 
     const parsedMarkdown = parseMarkdownFrom(config.get("markdownPath"));
 
@@ -50,4 +61,9 @@ export function processArgs(cli: Command): void {
     writeTemplates(config.get("outPath"), parsedTemplates);
 
     writeStyles(config.get("stylesPath"), config.get("outPath") + "/styles");
+}
+
+function scaffold(): void {
+    writeProgramFolder();
+    console.log("Finished scaffolding an example md2blog configuration");
 }

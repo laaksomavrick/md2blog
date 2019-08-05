@@ -1,6 +1,6 @@
 ---
-title: this is about
+title: about
 template: about
 ---
 
-i am mavrick and i do software
+hello, i am foo and i do bar
