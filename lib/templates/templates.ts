@@ -14,7 +14,7 @@ interface ITemplateMap {
     [key: string]: ejs.TemplateFunction;
 }
 
-export function parseFrom(dirname: string, parsedMarkdown: IParsedMarkdown[]): ITemplatedFile[] {
+export function parseTemplatesFrom(dirname: string, parsedMarkdown: IParsedMarkdown[]): ITemplatedFile[] {
     const files = filesystem.readFilesFrom(EJS_EXT, dirname, undefined);
     const map = getTemplateFiles(files);
     const templated = renderHtmlFrom(map, parsedMarkdown);

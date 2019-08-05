@@ -56,7 +56,7 @@ export interface IParsedMarkdown extends IParsedMarkdownMetadata {
  * IParsedMarkdown entries of an array and returning it. This function can throw
  * when no files are found, or if something unexpected goes wrong (e.g NPE).
  */
-export function parseFrom(root: string): IParsedMarkdown[] {
+export function parseMarkdownFrom(root: string): IParsedMarkdown[] {
     const files = readFilesFrom(".md", root, undefined);
 
     if (files.length === 0) {

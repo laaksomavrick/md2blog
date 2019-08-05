@@ -12,7 +12,9 @@
         "test": "jest --config jest.config.js"
     },
     "devDependencies": {
+        "@types/commander": "^2.12.2",
         "@types/common-tags": "^1.8.0",
+        "@types/convict": "^4.2.1",
         "@types/ejs": "^2.6.3",
         "@types/fs-extra": "^8.0.0",
         "@types/jest": "^24.0.15",
@@ -30,7 +32,9 @@
         "typescript-tslint-plugin": "^0.5.4"
     },
     "dependencies": {
+        "commander": "^2.20.0",
         "common-tags": "^1.8.0",
+        "convict": "^5.1.0",
         "ejs": "^2.6.2",
         "fs-extra": "^8.1.0",
         "js-yaml": "^3.13.1",

@@ -1,7 +1,7 @@
 import { stripIndent } from "common-tags";
 import memfs from "memfs";
 import { IParsedMarkdown } from "../markdown";
-import { ITemplatedFile, parseFrom } from "./templates";
+import { ITemplatedFile, parseTemplatesFrom } from "./templates";
 
 // Mock fs with memfs so our tests don't actually read from disk
 jest.mock("fs", () => {
@@ -67,10 +67,10 @@ describe("templates", () => {
 
     beforeAll(() => {
         memfs.vol.fromJSON(TEMPLATES, TEMPLATE_DIRECTORY);
-        [index, post] = parseFrom(TEMPLATE_DIRECTORY, PARSED_MARKDOWN);
+        [index, post] = parseTemplatesFrom(TEMPLATE_DIRECTORY, PARSED_MARKDOWN);
     });
 
-    describe("parseFrom", () => {
+    describe("parseTemplatesFrom", () => {
         it("templates a flat IParsedMarkdown item", () => {
             expect(index).toBeDefined();
         });

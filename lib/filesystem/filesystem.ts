@@ -1,9 +1,11 @@
 import fs from "fs-extra";
 import mkdirp from "mkdirp";
+import { homedir } from "os";
 import path from "path";
 import { ITemplatedFile } from "../templates";
 
 export const FILE_ENCODING = "utf8";
+export const DEFAULT_DIRECTORY = ".md2blog";
 
 export interface IReadFile {
     // The absolute filepath of the file
@@ -29,6 +31,7 @@ export interface IReadFile {
 }
 
 export function readFilesFrom(fileExtension: string, root: string, subpath: string | undefined): IReadFile[] {
+    // TODO: graceful failure if folder doesn't exist + test case
     const pathToRead = subpath ? `${root}/${subpath}` : root;
     if (process.env.NODE_ENV !== "test") {
         console.log(`Reading ${fileExtension} files from ${pathToRead}`);
@@ -99,5 +102,11 @@ export function writeTemplates(dirname: string, templates: ITemplatedFile[]): vo
 
 export function writeStyles(dirname: string, stylesFolderPath: string): void {
     // TODO check if exists, err handling, etc
-    fs.copySync(stylesFolderPath, dirname);
+    mkdirp.sync(stylesFolderPath);
+    fs.copySync(dirname, stylesFolderPath);
+}
+
+export function writeProgramFolder(): void {
+    const programFolderPath = path.join(homedir(), DEFAULT_DIRECTORY);
+    mkdirp.sync(programFolderPath);
 }
