@@ -7,6 +7,7 @@ import { DEFAULT_DIRECTORY } from "../filesystem";
 // TODO: comments
 
 interface IConfig {
+    env: string;
     markdownPath: string;
     outPath: string;
     stylesPath: string;
@@ -18,6 +19,12 @@ function defaultPath(subpath: string): string {
 }
 
 export const config = convict<IConfig>({
+    env: {
+        default: "development",
+        doc: "The application environment.",
+        env: "NODE_ENV",
+        format: ["production", "development", "test"],
+    },
     markdownPath: {
         default: defaultPath("markdown"),
         doc: "The path to a folder containing .md documents",

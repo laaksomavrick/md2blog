@@ -2,7 +2,7 @@ import commander from "commander";
 import { homedir } from "os";
 import path from "path";
 import { config } from "../config";
-import { DEFAULT_DIRECTORY, upsertDirectory, writeTemplates } from "../filesystem";
+import { DEFAULT_DIRECTORY, directoryExists, upsertDirectory, writeTemplates } from "../filesystem";
 import { parseMarkdownFrom } from "../markdown";
 import { parseTemplatesFrom } from "../templates";
 
@@ -52,9 +52,11 @@ function generate(...args: any[]): void {
         }
     }
 
-    // TODO
-    // if .md2blog doesn't exist, error message specifying to use md2blog generate
-    // assuming override = false
+    const outPath = config.get("outPath");
+
+    if (!directoryExists(outPath)) {
+        throw new Error(`outPath does not exist. Have you tried running md2blog scaffold?`);
+    }
 
     const parsedMarkdown = parseMarkdownFrom(config.get("markdownPath"));
     const parsedTemplates = parseTemplatesFrom(config.get("templatesPath"), parsedMarkdown);
@@ -70,5 +72,5 @@ function scaffold(): void {
 
     upsertDirectory(src, dest);
 
-    console.log("Finished scaffolding an example md2blog configuration");
+    console.log("Finished scaffolding");
 }

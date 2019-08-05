@@ -106,3 +106,8 @@ export function upsertDirectory(src: string, dest: string): void {
     mkdirp.sync(dest);
     fs.copySync(src, dest);
 }
+
+export function directoryExists(directoryPath: string): boolean {
+    console.log(`Checking if ${directoryPath} exists`);
+    return fs.existsSync(directoryPath);
+}
