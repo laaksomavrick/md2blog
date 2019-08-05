@@ -1,6 +1,8 @@
 import commander from "commander";
+import { homedir } from "os";
+import path from "path";
 import { config } from "../config";
-import { writeProgramFolder, writeStyles, writeTemplates } from "../filesystem";
+import { DEFAULT_DIRECTORY, upsertDirectory, writeTemplates } from "../filesystem";
 import { parseMarkdownFrom } from "../markdown";
 import { parseTemplatesFrom } from "../templates";
 
@@ -55,15 +57,18 @@ function generate(...args: any[]): void {
     // assuming override = false
 
     const parsedMarkdown = parseMarkdownFrom(config.get("markdownPath"));
-
     const parsedTemplates = parseTemplatesFrom(config.get("templatesPath"), parsedMarkdown);
 
     writeTemplates(config.get("outPath"), parsedTemplates);
-
-    writeStyles(config.get("stylesPath"), config.get("outPath") + "/styles");
+    upsertDirectory(config.get("stylesPath"), config.get("outPath") + "/styles");
 }
 
 function scaffold(): void {
-    writeProgramFolder();
+    // Since example is included in the "build" folder, this will work
+    const src = path.join(__dirname, "..", "..", "example");
+    const dest = path.join(homedir(), DEFAULT_DIRECTORY);
+
+    upsertDirectory(src, dest);
+
     console.log("Finished scaffolding an example md2blog configuration");
 }

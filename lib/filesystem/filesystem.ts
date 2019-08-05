@@ -100,16 +100,9 @@ export function writeTemplates(dirname: string, templates: ITemplatedFile[]): vo
     }
 }
 
-export function writeStyles(src: string, dest: string): void {
+export function upsertDirectory(src: string, dest: string): void {
     // TODO check if exists, err handling, etc
-    mkdirp.sync(dest);
-    fs.copySync(src, dest);
-}
-
-export function writeProgramFolder(): void {
-    // Since example is included in the "build" folder, this will work
-    const src = path.join(__dirname, "..", "..", "example");
-    const dest = path.join(homedir(), DEFAULT_DIRECTORY);
+    console.log(`Upserting ${src} to ${dest}`);
     mkdirp.sync(dest);
     fs.copySync(src, dest);
 }
