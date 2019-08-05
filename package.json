@@ -1,15 +1,21 @@
 {
-    "name": "static-site-generator",
+    "name": "md2blog",
     "version": "0.1.0",
-    "description": "A static site generator",
+    "description": "A simple, specialized blog generator",
     "license": "MIT",
     "engines": {
         "node": "10"
     },
+    "main": "build/index.js",
+    "files": ["build/**/*"],
+    "prepare" : "yarn build",
+    "prepublishOnly" : "yarn test && yarn lint",
     "scripts": {
-        "generate": "ts-node index.ts",
+        "main": "ts-node index.ts",
+        "lint": "tslint --project .",
         "format": "prettier --write \"cmd/**/*.ts\" \"lib/**/*.ts\"",
-        "test": "jest --config jest.config.js"
+        "test": "jest --config jest.config.js",
+        "build": "tsc --outDir build"
     },
     "devDependencies": {
         "@types/commander": "^2.12.2",

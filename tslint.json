@@ -10,5 +10,12 @@
         "arrow-parens": false,
         "trailing-comma": true
     },
-    "rulesDirectory": []
+    "rulesDirectory": [],
+    "include": [
+        "index.ts",
+        "lib/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }

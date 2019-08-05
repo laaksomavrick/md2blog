@@ -9,6 +9,10 @@
         "name": "typescript-tslint-plugin" ,
         "configFile": "./tslint.json",
       }
-    ]
-  }
+    ],
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }
