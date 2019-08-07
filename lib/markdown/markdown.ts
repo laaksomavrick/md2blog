@@ -65,10 +65,9 @@ export function parseMarkdownFrom(root: string): IParsedMarkdown[] {
 
     const parsedFiles = parseMarkdownFiles(files);
 
-    // This is modifying in place, sry I'm a pleb
-    populateParsedMarkdownRequires(parsedFiles);
+    const populatedParsedFiles = populateParsedMarkdownRequires(parsedFiles);
 
-    return parsedFiles;
+    return populatedParsedFiles;
 }
 
 function parseMarkdownFiles(files: IReadFile[]): IParsedMarkdown[] {
@@ -109,13 +108,13 @@ function parseMarkdownFiles(files: IReadFile[]): IParsedMarkdown[] {
     );
 }
 
-function populateParsedMarkdownRequires(parsedMarkdown: IParsedMarkdown[]): void {
+function populateParsedMarkdownRequires(parsedMarkdown: IParsedMarkdown[]): IParsedMarkdown[] {
     // Lets only bother finding things once
     const memo: any = {};
 
-    for (const parsedFile of parsedMarkdown) {
+    return parsedMarkdown.map((parsedFile: IParsedMarkdown) => {
         if (!parsedFile.require) {
-            continue;
+            return parsedFile;
         }
 
         for (const required of parsedFile.require) {
@@ -129,5 +128,25 @@ function populateParsedMarkdownRequires(parsedMarkdown: IParsedMarkdown[]): void
                 parsedFile.populatedRequire[required] = match;
             }
         }
-    }
+
+        return parsedFile;
+    });
+
+    // for (const parsedFile of parsedMarkdown) {
+    //     if (!parsedFile.require) {
+    //         continue;
+    //     }
+
+    //     for (const required of parsedFile.require) {
+    //         let match = memo[required];
+
+    //         if (match) {
+    //             parsedFile.populatedRequire[required] = match;
+    //         } else {
+    //             match = parsedMarkdown.filter(md => md.parentDirectoryName === required);
+    //             memo[required] = match;
+    //             parsedFile.populatedRequire[required] = match;
+    //         }
+    //     }
+    // }
 }
