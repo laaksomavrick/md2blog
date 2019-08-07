@@ -1,6 +1,5 @@
 import fs from "fs-extra";
 import mkdirp from "mkdirp";
-import { homedir } from "os";
 import path from "path";
 import { ITemplatedFile } from "../templates";
 
