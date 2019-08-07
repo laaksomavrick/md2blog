@@ -1,5 +1,5 @@
 import { buildCli } from "./lib/cli";
-import { config } from "./lib/config";
+import config from "./lib/config";
 
 function main(): void {
     try {

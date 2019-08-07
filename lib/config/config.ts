@@ -18,7 +18,7 @@ function defaultPath(subpath: string): string {
     return path.join(homedir(), DEFAULT_DIRECTORY, subpath);
 }
 
-export const config = convict<IConfig>({
+export default convict<IConfig>({
     env: {
         default: "development",
         doc: "The application environment.",

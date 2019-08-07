@@ -1,7 +1,7 @@
 import commander from "commander";
 import { homedir } from "os";
 import path from "path";
-import { config } from "../config";
+import config from "../config";
 import { DEFAULT_DIRECTORY, directoryExists, upsertDirectory, writeTemplates } from "../filesystem";
 import { parseMarkdownFrom } from "../markdown";
 import { parseTemplatesFrom } from "../templates";
