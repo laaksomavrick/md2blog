@@ -95,15 +95,13 @@ function scaffold(): void {
 // TODO actually do it for testing purposes
 // TODO commands should parse args, call action
 function md(...args: any[]): void {
-
-    let markdownPath = config.get("markdownPath");
-
     const [cmd] = args;
 
-    const templateTypeArg = cmd.templateType;
-    const markdownPathArg = cmd.markdownPath;
-
+    let markdownPath = config.get("markdownPath");
     let templateType = "yourtemplate";
+
+    const markdownPathArg = cmd.markdownPath;
+    const templateTypeArg = cmd.templateType;
 
     if (markdownPathArg) {
         markdownPath = markdownPathArg;
