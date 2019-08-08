@@ -131,22 +131,4 @@ function populateParsedMarkdownRequires(parsedMarkdown: IParsedMarkdown[]): IPar
 
         return parsedFile;
     });
-
-    // for (const parsedFile of parsedMarkdown) {
-    //     if (!parsedFile.require) {
-    //         continue;
-    //     }
-
-    //     for (const required of parsedFile.require) {
-    //         let match = memo[required];
-
-    //         if (match) {
-    //             parsedFile.populatedRequire[required] = match;
-    //         } else {
-    //             match = parsedMarkdown.filter(md => md.parentDirectoryName === required);
-    //             memo[required] = match;
-    //             parsedFile.populatedRequire[required] = match;
-    //         }
-    //     }
-    // }
 }

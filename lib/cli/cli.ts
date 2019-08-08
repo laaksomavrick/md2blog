@@ -1,8 +1,10 @@
 import commander from "commander";
+import { stripIndent } from "common-tags";
+import mkdirp from "mkdirp";
 import { homedir } from "os";
 import path from "path";
 import config from "../config";
-import { DEFAULT_DIRECTORY, directoryExists, upsertDirectory, writeTemplates } from "../filesystem";
+import { DEFAULT_DIRECTORY, directoryExists, upsertDirectory, upsertFile, writeTemplates } from "../filesystem";
 import { parseMarkdownFrom } from "../markdown";
 import { parseTemplatesFrom } from "../templates";
 
@@ -14,7 +16,7 @@ export function buildCli(): commander.Command {
 
     program
         .command("generate")
-        .description("generate blog from given files")
+        .description("generate html from given files")
         .option(
             "-t, --templatesPath [path]",
             "The absolute path to a folder containing .ejs templates",
@@ -38,15 +40,29 @@ export function buildCli(): commander.Command {
         .description("scaffold an example md2blog configuration")
         .action(scaffold);
 
+    program
+        .command("md")
+        .description("generate a markdown document at the given file path")
+        .option(
+            "-m, --markdownPath [markdownPath]",
+            "Override the default output directory",
+            config.get("markdownPath"),
+        )
+        .option(
+            "-t --templateType [templateType]",
+            "Set a template type for the generated markdown file (affects file location and template value)"
+        )
+        .action(md);
+
     return program;
 }
 
 function generate(...args: any[]): void {
-    const [arg] = args;
+    const [cmd] = args;
     const toCheck = ["templatesPath", "markdownPath", "stylesPath", "outPath"];
 
     for (const check of toCheck) {
-        const cliOptionValue = arg[check];
+        const cliOptionValue = cmd[check];
         if (cliOptionValue !== config.get(check)) {
             config.set(check, cliOptionValue);
         }
@@ -73,4 +89,47 @@ function scaffold(): void {
     upsertDirectory(src, dest);
 
     console.log("Finished scaffolding");
+}
+
+// TODO in a bigger project you'd separate actions from their commands
+// TODO actually do it for testing purposes
+// TODO commands should parse args, call action
+function md(...args: any[]): void {
+
+    let markdownPath = config.get("markdownPath");
+
+    const [cmd] = args;
+
+    const templateTypeArg = cmd.templateType;
+    const markdownPathArg = cmd.markdownPath;
+
+    let templateType = "yourtemplate";
+
+    if (markdownPathArg) {
+        markdownPath = markdownPathArg;
+    }
+
+    if (templateTypeArg) {
+        templateType = templateTypeArg;
+        const templateTypeDirectory = `${templateType}s`;
+        markdownPath = path.join(markdownPath, templateTypeDirectory);
+
+        mkdirp.sync(markdownPath);
+    }
+
+    const timestamp = Date.now();
+    const mdTemplate = stripIndent`
+        ---
+        title: yourtitle
+        template: ${templateType}
+        timestamp: ${timestamp}
+        prettyUrl: true
+        ---
+
+        yourcontent
+    `;
+
+    const fileOutPath = path.join(markdownPath, `${timestamp}.md`);
+
+    upsertFile(fileOutPath, mdTemplate);
 }
