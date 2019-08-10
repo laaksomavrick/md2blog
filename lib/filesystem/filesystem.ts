@@ -77,8 +77,6 @@ export function readFilesFrom(fileExtension: string, root: string, subpath: stri
     return files;
 }
 
-// If something else ever needs this, move to filesystem with it's own type
-// Otherwise, leave for now
 export function writeTemplates(dirname: string, templates: ITemplatedFile[]): void {
     console.log(`Writing html to ${dirname}`);
 
@@ -100,14 +98,12 @@ export function writeTemplates(dirname: string, templates: ITemplatedFile[]): vo
 }
 
 export function upsertDirectory(src: string, dest: string): void {
-    // TODO check if exists, err handling, etc
     console.log(`Upserting ${src} to ${dest}`);
     mkdirp.sync(dest);
     fs.copySync(src, dest);
 }
 
 export function upsertFile(outPath: string, file: any): void {
-    // TODO check if exists, err handling, etc
     console.log(`Upserting ${outPath}`);
     fs.writeFileSync(outPath, file);
 }

@@ -23,6 +23,9 @@ export interface IParsedMarkdownMetadata {
 
     // Whether or not we want to use a pretty url for the document when served/referenced in html
     prettyUrl: boolean;
+
+    // The unix timestamp for the markdown file.
+    timestamp: number | undefined;
 }
 
 /**
@@ -83,6 +86,7 @@ function parseMarkdownFiles(files: IReadFile[]): IParsedMarkdown[] {
             const title = metadata.title;
             const template = metadata.template;
             const prettyUrl = metadata.prettyUrl || false;
+            const timestamp = metadata.timestamp || undefined;
 
             const absolutePath = file.absolutePath;
             const fileName = prettyUrl ? metadata.title.split(" ").join("-") : file.fileName;
@@ -102,6 +106,7 @@ function parseMarkdownFiles(files: IReadFile[]): IParsedMarkdown[] {
                 require,
                 subpath,
                 template,
+                timestamp,
                 title,
             };
         },

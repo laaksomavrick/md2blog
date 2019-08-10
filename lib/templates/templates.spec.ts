@@ -45,6 +45,7 @@ describe("templates", () => {
             require: undefined,
             subpath: undefined,
             template: "index",
+            timestamp: undefined,
             title: "this is the index",
         },
         {
@@ -58,6 +59,7 @@ describe("templates", () => {
             require: undefined,
             subpath: "posts",
             template: "post",
+            timestamp: 1565228333616,
             title: "a post",
         },
     ];

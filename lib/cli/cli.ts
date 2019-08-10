@@ -1,12 +1,10 @@
 import commander from "commander";
-import { stripIndent } from "common-tags";
 import mkdirp from "mkdirp";
 import { homedir } from "os";
 import path from "path";
+import { generate, md, scaffold } from "../actions";
 import config from "../config";
-import { DEFAULT_DIRECTORY, directoryExists, upsertDirectory, upsertFile, writeTemplates } from "../filesystem";
-import { parseMarkdownFrom } from "../markdown";
-import { parseTemplatesFrom } from "../templates";
+import { DEFAULT_DIRECTORY } from "../filesystem";
 
 // TODO: comments
 
@@ -33,12 +31,12 @@ export function buildCli(): commander.Command {
             config.get("stylesPath"),
         )
         .option("-o, --outPath [path]", "The absolute path for program output", config.get("outPath"))
-        .action(generate);
+        .action(callGenerate);
 
     program
         .command("scaffold")
         .description("scaffold an example md2blog configuration")
-        .action(scaffold);
+        .action(callScaffold);
 
     program
         .command("md")
@@ -52,13 +50,14 @@ export function buildCli(): commander.Command {
             "-t --templateType [templateType]",
             "Set a template type for the generated markdown file (affects file location and template value)"
         )
-        .action(md);
+        .action(callMd);
 
     return program;
 }
 
-function generate(...args: any[]): void {
+function callGenerate(...args: any[]): void {
     const [cmd] = args;
+    // TODO: better type safety
     const toCheck = ["templatesPath", "markdownPath", "stylesPath", "outPath"];
 
     for (const check of toCheck) {
@@ -69,32 +68,24 @@ function generate(...args: any[]): void {
     }
 
     const outPath = config.get("outPath");
+    const markdownPath = config.get("markdownPath");
+    const templatesPath = config.get("templatesPath");
+    const stylesPath = config.get("stylesPath");
 
-    if (!directoryExists(outPath)) {
-        throw new Error(`outPath does not exist. Have you tried running md2blog scaffold?`);
-    }
-
-    const parsedMarkdown = parseMarkdownFrom(config.get("markdownPath"));
-    const parsedTemplates = parseTemplatesFrom(config.get("templatesPath"), parsedMarkdown);
-
-    writeTemplates(config.get("outPath"), parsedTemplates);
-    upsertDirectory(config.get("stylesPath"), config.get("outPath") + "/styles");
+    generate({outPath, markdownPath, templatesPath, stylesPath});
 }
 
-function scaffold(): void {
+function callScaffold(): void {
     // Since example is included in the "build" folder, this will work
     const src = path.join(__dirname, "..", "..", "example");
     const dest = path.join(homedir(), DEFAULT_DIRECTORY);
-
-    upsertDirectory(src, dest);
-
-    console.log("Finished scaffolding");
+    scaffold(src, dest);
 }
 
 // TODO in a bigger project you'd separate actions from their commands
 // TODO actually do it for testing purposes
 // TODO commands should parse args, call action
-function md(...args: any[]): void {
+function callMd(...args: any[]): void {
     const [cmd] = args;
 
     let markdownPath = config.get("markdownPath");
@@ -115,19 +106,6 @@ function md(...args: any[]): void {
         mkdirp.sync(markdownPath);
     }
 
-    const timestamp = Date.now();
-    const mdTemplate = stripIndent`
-        ---
-        title: yourtitle
-        template: ${templateType}
-        timestamp: ${timestamp}
-        prettyUrl: true
-        ---
+    md({markdownPath, templateType});
 
-        yourcontent
-    `;
-
-    const fileOutPath = path.join(markdownPath, `${timestamp}.md`);
-
-    upsertFile(fileOutPath, mdTemplate);
 }

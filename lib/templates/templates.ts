@@ -30,7 +30,7 @@ function renderHtmlFrom(map: ITemplateMap, parsedMarkdown: IParsedMarkdown[]) {
         const templateFn = map[mdTemplate];
 
         if (!templateFn) {
-            console.error(""); // TODO
+            console.warn(`No template found for ${md.fileName}, skipping...`);
             continue;
         }
 
