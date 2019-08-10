@@ -88,14 +88,15 @@ export function writeTemplates(dirname: string, templates: ITemplatedFile[]): vo
 
     for (const template of templates) {
         const rendered = template.rendered;
-        const href = template.href;
+        // TODO: this shouldn't be happening here
+        const filename = `${template.href}.html`;
         const subpath = template.subpath;
 
         if (subpath) {
             mkdirp.sync(`${dirname}/${subpath}`);
         }
 
-        const filepath = path.join(dirname, href);
+        const filepath = path.join(dirname, filename);
         fs.writeFileSync(filepath, rendered);
     }
 }
