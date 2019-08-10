@@ -4,6 +4,9 @@ import { directoryExists, upsertDirectory, upsertFile, writeTemplates } from "..
 import { parseMarkdownFrom } from "../markdown";
 import { parseTemplatesFrom } from "../templates";
 
+// TODO: comments
+// TODO: tests (given args, does the right thing)
+
 export interface IGenerateArgs {
     outPath: string;
     markdownPath: string;

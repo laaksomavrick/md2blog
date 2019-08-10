@@ -3,6 +3,9 @@ import mkdirp from "mkdirp";
 import path from "path";
 import { ITemplatedFile } from "../templates";
 
+// TODO: comments
+// TODO: tests (may not be necessary, fns are simple or used implicitly in other tests)
+
 export const FILE_ENCODING = "utf8";
 export const DEFAULT_DIRECTORY = ".md2blog";
 

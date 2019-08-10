@@ -7,6 +7,7 @@ import config from "../config";
 import { DEFAULT_DIRECTORY } from "../filesystem";
 
 // TODO: comments
+// TODO: tests (given argv, parses args correctly)
 
 export function buildCli(): commander.Command {
     const program = commander;
@@ -48,7 +49,7 @@ export function buildCli(): commander.Command {
         )
         .option(
             "-t --templateType [templateType]",
-            "Set a template type for the generated markdown file (affects file location and template value)"
+            "Set a template type for the generated markdown file (affects file location and template value)",
         )
         .action(callMd);
 
@@ -72,7 +73,7 @@ function callGenerate(...args: any[]): void {
     const templatesPath = config.get("templatesPath");
     const stylesPath = config.get("stylesPath");
 
-    generate({outPath, markdownPath, templatesPath, stylesPath});
+    generate({ outPath, markdownPath, templatesPath, stylesPath });
 }
 
 function callScaffold(): void {
@@ -106,6 +107,5 @@ function callMd(...args: any[]): void {
         mkdirp.sync(markdownPath);
     }
 
-    md({markdownPath, templateType});
-
+    md({ markdownPath, templateType });
 }
