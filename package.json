@@ -1,22 +1,31 @@
 {
     "name": "md2blog",
-    "version": "0.1.0",
-    "description": "A simple, specialized blog generator",
+    "version": "0.2.0",
+    "description": "A dead simple blog oriented static site generator",
+    "author": "Mavrick Laakso <laakso.mavrick@gmail.com>",
     "license": "MIT",
     "engines": {
         "node": "10"
     },
     "main": "build/index.js",
-    "files": ["build/**/*"],
-    "prepare" : "yarn build && yarn copy-example",
-    "prepublishOnly" : "yarn test && yarn lint",
+    "files": [
+        "build/**/*"
+    ],
+    "bin": {
+        "md2blog": "build/index.js"
+    },
     "scripts": {
         "main": "ts-node index.ts",
         "lint": "tslint --project .",
         "format": "prettier --write \"cmd/**/*.ts\" \"lib/**/*.ts\"",
         "test": "jest --config jest.config.js",
-        "build": "tsc --outDir build",
-        "copy-example": "cp -r example build/example"
+        "build": "rm -rf ./build && tsc",
+        "copy-example": "cp -r example build/example",
+        "prepare": "yarn build && yarn copy-example",
+        "prepublishOnly": "yarn test && yarn lint",
+        "preversion": "yarn lint",
+        "version": "yarn format && git add .",
+        "postversion": "git push && git push --tags"
     },
     "devDependencies": {
         "@types/commander": "^2.12.2",
