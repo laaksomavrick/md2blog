@@ -153,7 +153,7 @@ describe("markdown", () => {
             memfs.vol.fromJSON(markdownDirectory, `${__dirname}/${MARKDOWN_DIRECTORY}`);
             const [doc] = parseMarkdownFrom(`${__dirname}/${MARKDOWN_DIRECTORY}`);
 
-            expect(doc.href).toEqual("posts/0001-post.html");
+            expect(doc.href).toEqual("posts/0001-post");
         });
 
         it("derives the value of fileName when prettyUrl is true for a document", () => {

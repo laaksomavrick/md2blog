@@ -93,7 +93,7 @@ function parseMarkdownFiles(files: IReadFile[]): IParsedMarkdown[] {
             const populatedRequire = {};
             const parentDirectoryName = file.parentDirectoryName;
             const subpath = file.subpath;
-            const href = subpath ? `${subpath}/${fileName}.html` : `${fileName}.html`;
+            const href = subpath ? `${subpath}/${fileName}` : `${fileName}`;
 
             return {
                 absolutePath,
