@@ -1,6 +1,6 @@
 # md2blog
 
-md2blig is a dead simple blog oriented static site generator, developed out of frustration with complex static site generators which attempt to be everything for everyone. This package is in **beta**, meaning breaking changes may occur until a 1.0.0 release. That being said, I do not expect the functionality for the current cli to change.
+md2blog is a dead simple blog oriented static site generator, developed out of frustration with complex static site generators which attempt to be everything for everyone. This package is in **beta**, meaning breaking changes may occur until a 1.0.0 release. That being said, I do not expect the functionality for the current cli to change.
 
 ## Installation
 
