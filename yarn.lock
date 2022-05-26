@@ -749,15 +749,12 @@ convert-source-map@^1.1.0, convert-source-map@^1.4.0:
   dependencies:
     safe-buffer "~5.1.1"
 
-convict@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/convict/-/convict-5.1.0.tgz#d510cef0b9fd6424f4de09bc279b4481eec116ec"
+convict@^6.2.3:
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/convict/-/convict-6.2.3.tgz#61f02858f6f1c5806d55837c5bb54ed64731ee8a"
   dependencies:
-    json5 "2.1.0"
-    lodash.clonedeep "4.5.0"
-    moment "2.24.0"
-    validator "10.11.0"
-    yargs-parser "13.0.0"
+    lodash.clonedeep "^4.5.0"
+    yargs-parser "^20.2.7"
 
 copy-descriptor@^0.1.0:
   version "0.1.1"
@@ -1940,7 +1937,7 @@ json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
 
-json5@2.1.0, json5@2.x, json5@^2.1.0:
+json5@2.x, json5@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.1.0.tgz#e7a0c62c48285c628d20a10b85c89bb807c32850"
   dependencies:
@@ -2035,7 +2032,7 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
-lodash.clonedeep@4.5.0:
+lodash.clonedeep@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
 
@@ -2206,10 +2203,6 @@ mock-require@^3.0.2:
   dependencies:
     get-caller-file "^1.0.2"
     normalize-path "^2.1.1"
-
-moment@2.24.0:
-  version "2.24.0"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
 
 ms@2.0.0:
   version "2.0.0"
@@ -3276,10 +3269,6 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-validator@10.11.0:
-  version "10.11.0"
-  resolved "https://registry.yarnpkg.com/validator/-/validator-10.11.0.tgz#003108ea6e9a9874d31ccc9e5006856ccd76b228"
-
 verror@1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/verror/-/verror-1.10.0.tgz#3a105ca17053af55d6e270c1f8288682e18da400"
@@ -3431,19 +3420,16 @@ yargs-parser@10.x:
   dependencies:
     camelcase "^4.1.0"
 
-yargs-parser@13.0.0:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-13.0.0.tgz#3fc44f3e76a8bdb1cc3602e860108602e5ccde8b"
-  dependencies:
-    camelcase "^5.0.0"
-    decamelize "^1.2.0"
-
 yargs-parser@^11.1.1:
   version "11.1.1"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-11.1.1.tgz#879a0865973bca9f6bab5cbdf3b1c67ec7d3bcf4"
   dependencies:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
+
+yargs-parser@^20.2.7:
+  version "20.2.9"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.9.tgz#2eb7dc3b0289718fc295f362753845c41a0c94ee"
 
 yargs-parser@^8.1.0:
   version "8.1.0"
